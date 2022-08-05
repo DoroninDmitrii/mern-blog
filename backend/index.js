@@ -11,24 +11,8 @@ const app = express();
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('Hello, Dima!')
-});
+app.post('/auth/register', (req, res) => {
 
-app.post('/auth/login', (req, res) => {
-  console.log(req.body)
-
-  const token = jwt.sign({
-    email: req.body.email,
-    fullName: 'Ivan Ivanov'
-  }, 
-    "sercet"
-  );
-
-  res.json({
-    success: true,
-    token
-  });
 });
 
 app.listen(4000, (err) => {
