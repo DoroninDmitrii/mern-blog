@@ -26,16 +26,16 @@ app.post('/auth/register', registerValidation, async (req, res) => {
 
       const password = req.body.password;
       const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(password, salt)
+      const hash = await bcrypt.hash(password, salt)
 
-      const userData = new UserSchema({
+      const data = new UserSchema({
         email: req.body.email,
-        passwordHash,
+        passwordHash: hash,
         fullName: req.body.fullName,
         avatarUrl: req.body.avatarUrl,
       })
 
-      const user = await userData.save();
+      const user = await data.save();
 
       const token = jwt.sign({
         _id: user._id,
@@ -46,7 +46,9 @@ app.post('/auth/register', registerValidation, async (req, res) => {
         },
       );
 
-      return res.json({...user, token});
+      const { passwordHash, ...userData } = user._doc; 
+
+      return res.json({...userData, token});
     }
   } catch (err) {
     console.log(err)
