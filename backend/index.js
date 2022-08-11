@@ -6,7 +6,7 @@ import { registerValidation } from './validation/auth.js';
 import { validationResult } from "express-validator";
 
 import UserSchema from './models/user.js'
-import checkAuth from './utils/checkAuth.js'
+import { checkAuth } from './utils/checkAuth.js'
 
 mongoose.connect(
   'mongodb+srv://admin:111@cluster0.edvx7.mongodb.net/blog?retryWrites=true&w=majority'
@@ -92,18 +92,31 @@ app.post('/auth/register', registerValidation, async (req, res) => {
   }
 });
 
-app.get('/auth/me', checkAuth, (req, res) => {
+app.get('/auth/me', checkAuth, async (req, res) => {
   try {
-    res.json({
-      success: true
-    })
+    const user = await UserSchema.findById(req.userId)
 
-  } catch (err) {}
+    if (!user) {
+      return res.status(404).json({
+        message: "There is not user"
+      })
+    }
+
+    const { passwordHash, ...userData } = user._doc; 
+
+    return res.json(userData);
+
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({
+      message: "There is not access"
+    })
+  }
 })
 
 app.listen(4000, (err) => {
   if (err) {
     return console.log(err);
   }
-  console.log('Server is working')
+  console.log('Server is working');
 });
