@@ -20,9 +20,9 @@ app.post('/auth/register', registerValidation, UserController.register);
 app.get('/auth/me', checkAuth, UserController.getMe);
 
 app.post('/posts', checkAuth, postCreateValidation, PostController.create);
-// app.get('/posts', PostController.getAll);
-// app.get('/posts/:id', PostController.getOne);
-// app.delete('/posts', PostController.remove);
+app.get('/posts', PostController.getAll);
+app.get('/posts/:id', PostController.getOne);
+app.delete('/posts/:id', PostController.remove);
 // app.patch('/posts', PostController.update);
 
 
