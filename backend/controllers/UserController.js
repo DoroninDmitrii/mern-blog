@@ -61,9 +61,7 @@ export const login = async (req, res) => {
       expiresIn: '30d'
     });
 
-    const {passwordHash, userData} = user._doc;
-
-    return res.json({...userData, token});
+    return res.json({user, token});
 
   } catch (err) {
     console.log(err)

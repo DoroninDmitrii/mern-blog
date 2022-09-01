@@ -6,8 +6,10 @@ import Button from "@mui/material/Button";
 import {useForm} from 'react-hook-form'
 
 import styles from "./Login.module.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 import { fetchAuth } from "../../redux/slices/authSlice";
+import { selectIsAuth } from "../../redux/slices/authSlice";
 
 export const Login = () => {
   const {register, 
@@ -22,10 +24,15 @@ export const Login = () => {
     mode: 'onChange',
   });
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const isAuth = useSelector(selectIsAuth)
 
   const onSubmit = (values) => {
     dispatch(fetchAuth(values));
+  }
+
+  if (isAuth) {
+    return <Navigate to='/'/>
   }
 
   return (
