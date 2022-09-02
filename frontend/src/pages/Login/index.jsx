@@ -27,8 +27,12 @@ export const Login = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth)
 
-  const onSubmit = (values) => {
-    dispatch(fetchAuth(values));
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchAuth(values))
+    
+    if (data.payload.token) {
+      localStorage.setItem('token', data.payload.token);
+    }
   }
 
   if (isAuth) {
