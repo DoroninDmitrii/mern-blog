@@ -6,14 +6,16 @@ import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchPosts, fetchTags } from '../redux/slices/postsSlice';
 
-import { Post } from '../components/Post';
+import { Post } from '../components/Post/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 
 export const Home = () => {
 
   const dispatch = useDispatch();
+  const userData = useSelector(state => state.auth.data);
   const {posts, tags} = useSelector(state => state.posts);
+  console.log(posts?.items[0]?.user._id, 'post')
 
   const isPostLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
@@ -43,7 +45,7 @@ export const Home = () => {
               viewsCount={el.viewsCount}
               commentsCount={3}
               tags={el.tags}
-              isEditable
+              isEditable={userData?._id === el?.user._id}
             />
           ))}
         </Grid>
