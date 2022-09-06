@@ -15,7 +15,6 @@ export const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
   const {posts, tags} = useSelector(state => state.posts);
-  console.log(posts?.items[0]?.user._id, 'post')
 
   const isPostLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
