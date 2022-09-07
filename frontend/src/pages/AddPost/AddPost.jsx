@@ -10,18 +10,20 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 
 export const AddPost = () => {
-  const imageUrl = '';
   const [value, setValue] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const inputRef = useRef(null);
 
   const handleChangeFile = async (event) => {
+    // console.log(event.target.files)
     try {
       const formData = new FormData();
       const file = event.target.files[0];
       formData.append('image', file);
       const { data } = await axios.post('/upload', formData);
+      setImageUrl(data.url);
     } catch (err) {
       console.log(err);
       alert('Mistake is happend!')
@@ -56,12 +58,12 @@ export const AddPost = () => {
       </Button>
       <input ref={inputRef} type="file" onChange={handleChangeFile} hidden/>
       {imageUrl && (
+        <>
         <Button variant="contained" color="error" onClick={onClickRemoveImage}>
           Удалить
         </Button>
-      )}
-      {imageUrl && (
-        <img className={styles.image} src={`http://localhost:4444${imageUrl}`} alt="Uploaded" />
+        <img className={styles.image} src={`http://localhost:4000${imageUrl}`} alt="Uploaded" />
+        </>
       )}
       <br />
       <br />
