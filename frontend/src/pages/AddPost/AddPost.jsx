@@ -4,25 +4,32 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import SimpleMDE from 'react-simplemde-editor';
 import { useState, useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../axios';
 
 import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 
 export const AddPost = () => {
-  const [value, setValue] = useState('');
+  const navitage = useNavigate();
+  const [isLoading, setIsloading] = useState(false);
+  const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const inputRef = useRef(null);
 
   const handleChangeFile = async (event) => {
-    // console.log(event.target.files)
+    // console.log(event.target.files[0])
     try {
       const formData = new FormData();
       const file = event.target.files[0];
       formData.append('image', file);
-      const { data } = await axios.post('/upload', formData);
+      const { data } = await axios.post('/upload', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
       setImageUrl(data.url);
     } catch (err) {
       console.log(err);
@@ -30,11 +37,31 @@ export const AddPost = () => {
     }
   };
 
-  const onClickRemoveImage = () => {};
+  const onClickRemoveImage = () => {
+    setImageUrl('')
+  };
 
-  const onChange = useCallback((value) => {
-    setValue(value);
+  const onChange = useCallback((text) => {
+    setText(text);
   }, []);
+
+  const onSubmit = async () => {
+    try {
+      setIsloading(true);
+      const fields = {
+        text,
+        tags,
+        imageUrl,
+        title
+      };
+      const { data } = await axios.post('/posts', fields);
+      const id = data._id;
+
+      navitage(`/posts/${id}`)
+    } catch(e) {
+      console.log('You have mistake')
+    }
+  }
 
   const options = useMemo(
     () => ({
@@ -83,9 +110,9 @@ export const AddPost = () => {
       onChange={(e) => setTags(e.target.value)} 
       fullWidth 
       />
-      <SimpleMDE className={styles.editor} value={value} onChange={onChange} options={options} />
+      <SimpleMDE className={styles.editor} value={text} onChange={onChange} options={options} />
       <div className={styles.buttons}>
-        <Button size="large" variant="contained">
+        <Button onClick={onSubmit} size="large" variant="contained">
           Опубликовать
         </Button>
         <a href="/">
